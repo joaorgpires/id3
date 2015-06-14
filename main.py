@@ -1,4 +1,5 @@
 from dtree import *
+from classify import *
 import sys
 import os.path
 
@@ -21,20 +22,25 @@ def readData(fname):
     
     return attr, inst, cls
 
-def readInstClasify(line, attr):
-    line = [item.strip() for item in line.split(',')]
-    return [(line[i], attr[i]) for i in range(len(line))]
-
 def readClas(fname, attr):
-    inst = []
     with open(fname, 'r') as fin:
         lines = [line.rstrip() for line in fin.readlines()]
-
-    for line in lines[1:]:
-        a = readInstClasify(line, attr)
-        inst.append(a)
     
-    return inst
+    testInst = []
+    
+    for line in lines:
+        testInst.append(dict(zip(attr, [i.strip() for i in line.split(',')])))
+
+    return testInst
+
+def printTree(tree, str):
+    if type(tree) == dict:
+        print "%s%s" % (str, tree.keys()[0])
+        for node in tree.values()[0].keys():
+            print "%s\t%s" % (str, node)
+            printTree(tree.values()[0][node], str + "\t")
+    else:
+        print "%s\tClass: %s" % (str, tree)
 
 if __name__ == "__main__":
     #print "ok", len(sys.argv)
@@ -45,6 +51,9 @@ if __name__ == "__main__":
         attr, inst, clas = readData(ftrain)
         #print [ins[cls] for ins in inst]
         dtree = createDtree(attr, inst, clas)
+        printTree(dtree, "")
+        #print attr, inst, clas
+        #print dtree
 
     elif len(sys.argv) == 3:
         ftrain = sys.argv[1]
@@ -54,7 +63,11 @@ if __name__ == "__main__":
         attr, inst, clas = readData(ftrain)
         classif = readClas(ftest, attr)
         dtree = createDtree(attr, inst, clas)
+        printTree(dtree, "")
+        testRes = classify(classif, dtree)
+        for i in range(len(testRes)):
+            print "Test case %d: %s" % (i + 1, testRes[i])
 
     else:
-        print "Just a little helper:\nArguments needed. If you want to both train and test, give me both files, in that order.\nOtherwise, just give me the training file."
+        print "Just a little helper:\n\t- Arguments needed. If you want to both train and test, give me both files, in that order.\n\t- Otherwise, just give me the training file."
         sys.exit(0)
