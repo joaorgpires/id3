@@ -14,10 +14,11 @@ def entropy(inst, clas):
             #if not, put the clas value in the dictionary with val 1.0
             freq[ins[clas]] = 1.0
     
+    #print inst, freq
     for f in freq.values():
-        v = (f / len(inst))
-        entr += (-v) * math.log(v, 2)
-    
+        entr += (-f / len(inst)) * math.log(f / len(inst), 2)
+
+    #print entr
     return entr
 
 def infoGain(inst, attry, clas):
@@ -25,17 +26,18 @@ def infoGain(inst, attry, clas):
     freq = {}
     rest = 0.0
     
+    #print inst
     for ins in inst:
         #if already found this answer, add 1.0
-        if freq.has_key(ins[clas]):
-            freq[ins[clas]] += 1.0
+        if freq.has_key(ins[attry]):
+            freq[ins[attry]] += 1.0
         else:            
             #if not, put the clas value in the dictionary with val 1.0
-            freq[ins[clas]] = 1.0
+            freq[ins[attry]] = 1.0
     
     for f in freq.keys():
         prob = freq[f] / sum(freq.values())
-        l = [ins for ins in inst if ins[attry] == val]
+        l = [ins for ins in inst if ins[attry] == f]
         rest += prob * entropy(l, clas)
     
     #gain = originalInfo - rest(attry)
