@@ -37,7 +37,7 @@ def printTree(tree, str):
     if type(tree) == dict:
         print "%s<%s>" % (str, tree.keys()[0])
         for node in tree.values()[0].keys():
-            print "%s\t%s" % (str, node)
+            print "%s\t%s:" % (str, node)
             printTree(tree.values()[0][node], str + "\t\t")
     else:
         print "%sClass: %s" % (str, tree)
